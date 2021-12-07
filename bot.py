@@ -2,41 +2,53 @@
 import settings
 import logging
 
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, messagehandler
-from telegram import ReplyKeyboardMarkup, replymarkup
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram import ReplyKeyboardMarkup, KeyboardButton
 
 from datetime import date
-
+logging.basicConfig(filename="bot.log", level=logging.INFO)
 
 def greet_user(update, context):
-    print('Вызван /start')
-    my_keyboard = ReplyKeyboardMarkup([['Который час?']])
+    text = 'Вызван /start'
+    print(text)
+    my_keyboard = ReplyKeyboardMarkup([['Начать'], ['Справка']])
     update.message.reply_text(
-        f'Здравствуйте! Что Вас интересует?',
-        reply_markup=my_keyboard
-    )
+        f"Здравствуй, пользователь!",
+        reply_markup=my_keyboard)
+#    cr_keyboard = ReplyKeyboardMarkup([['крипта', 'валюта', 'акции'],['новости'],['домой']])
+#   update.message.reply_text(f'Что Вас интересует?', reply_markup=cr_keyboard)
+
+def menu(update, context):
+    cr_keyboard = ReplyKeyboardMarkup([['крипта', 'валюта', 'акции'],['новости'],['домой']])
+    update.message.reply_text(f'Что Вас интересует?', reply_markup=cr_keyboard)
 
 def talk_to_me(update, context):
     user_text = update.message.text
     print(user_text)
     update.message.reply_text(user_text)
 
-def what_day():
-#    my_keyboard = ReplyKeyboardMarkup()
-    print(f'Точная дата: {date.today}')
-
+#def what_day():
+ #   my_keyboard = ReplyKeyboardMarkup()
+ #   date = (f'Точная дата: {date.today}')
+ #   update.message.reply_text(date, reply_markup=my_keyboard)
 
 def main():
-    mybot = Updater(settings.API_KEY, use_context=True)
+    bot = Updater(settings.API_KEY, use_context=True)
 
-    dp = mybot.dispatcher
-    dp.add_handler(CommandHandler("start", greet_user))
+    dp = bot.dispatcher
+    dp.add_handler
+    dp.add_handler(CommandHandler('start', greet_user))
+#    dp.add_handler(CommandHandler('Начать', menu))
+#    dp.add.handler(MessageHandler(Filters.regex('^(Начать)$'), menu))
+    #dp.add.handler(MessageHandler(Filters.regex('^(домой)$'), greet_user))
+ #   dp.add_handler(MessageHandler(Filters.regex('^(домой)$'), greet_user))
+#    dp.add_handler(CommandHandler('домой', greet_user))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
-    dp.add_handler(CommandHandler("date", what_day))
-    dp.add.handler(messagehandler(Filters.regex('^(Который час?)$'), what_day))
+    
+    
 
-    mybot.start_polling()
-    mybot.idle()
+    bot.start_polling()
+    bot.idle()
 
 
 if __name__ == "__main__":
