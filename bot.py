@@ -11,7 +11,7 @@ logging.basicConfig(filename="bot.log", level=logging.INFO)
 def greet_user(update, context):
     text = 'Вызван /start'
     print(text)
-    my_keyboard = ReplyKeyboardMarkup([['Начать'], ['Справка']])
+    my_keyboard = ReplyKeyboardMarkup([['Menu'], ['About']])
     update.message.reply_text(
         f"Здравствуй, пользователь!",
         reply_markup=my_keyboard)
@@ -19,7 +19,7 @@ def greet_user(update, context):
 #   update.message.reply_text(f'Что Вас интересует?', reply_markup=cr_keyboard)
 
 def menu(update, context):
-    cr_keyboard = ReplyKeyboardMarkup([['крипта', 'валюта', 'акции'],['новости'],['домой']])
+    cr_keyboard = ReplyKeyboardMarkup([['Button A', 'Button B', 'Button C'],['Button Z'],['home']])
     update.message.reply_text(f'Что Вас интересует?', reply_markup=cr_keyboard)
 
 def talk_to_me(update, context):
@@ -38,11 +38,10 @@ def main():
     dp = bot.dispatcher
     dp.add_handler
     dp.add_handler(CommandHandler('start', greet_user))
-#    dp.add_handler(CommandHandler('Начать', menu))
-#    dp.add.handler(MessageHandler(Filters.regex('^(Начать)$'), menu))
-    #dp.add.handler(MessageHandler(Filters.regex('^(домой)$'), greet_user))
- #   dp.add_handler(MessageHandler(Filters.regex('^(домой)$'), greet_user))
-#    dp.add_handler(CommandHandler('домой', greet_user))
+    dp.add_handler(CommandHandler('Menu', menu))
+    dp.add_handler(MessageHandler(Filters.regex('^(Menu)$'), menu))
+    dp.add_handler(MessageHandler(Filters.regex('^(home)$'), greet_user))
+    dp.add_handler(CommandHandler('home', greet_user))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
     
     
