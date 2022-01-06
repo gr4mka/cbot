@@ -6,7 +6,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Conve
 from telegram import ReplyKeyboardMarkup, KeyboardButton
 
 from datetime import date
-from registration import registration_start
+from registration import registration_start, registration_name
 logging.basicConfig(filename="bot.log", level=logging.INFO)
 
 
@@ -14,18 +14,10 @@ def greet_user(update, context):
     text = 'Вызван /start'
     print(text)
     my_keyboard = ReplyKeyboardMarkup([['Registration'], ['Menu'], ['About']])
-#    context.user_data['name'] = registration(context.user_data)
-    username = update.effective_user.first_name
+    username = update.effective_user.first_name  # изначально обращамся к пользователю так, как он сам себя называет в телеге
     text = update.message.text
-    update.message.reply_text(f'Здравствуй, {username}!', reply_markup=my_keyboard)
-""""
-def registration(update, user_data): #пытаюсь прикрутить регистрацию пользователя
-    if 'name' not in user_data:
-        print('Как к Вам обращаться?')
-        name = update.message.text
-        return name(use_aliases=True)
-    return user_data['name']
-"""
+    update.message.reply_text(f'Здравствуйте, {username}!', reply_markup=my_keyboard)
+
 
 def menu(update, context):
     menu_keyboard = ReplyKeyboardMarkup([['Input', 'Button B', 'Button C'],['Button Z'],['home']])
@@ -39,9 +31,6 @@ def input(update, context):
     ['home']])
     update.message.reply_text(f'Выберите ID валюты', reply_markup=my_keyboard)
 
-#def writerCSV(message):
-#    with open('Users.csv', 'w') as fileCVS:
-#        fileCVS.write(message.text)
 
 def about(update, context):
     about_text =  'Бот разработан в рамках обучающего курса Learn Python, 2022'
@@ -50,13 +39,9 @@ def about(update, context):
 
 def talk_to_me(update, context):
     user_text = update.message.text
-    print(user_text)
+    print(f'Ваша команда', {user_text}, 'не распознана')
     update.message.reply_text(user_text)
 
-#def what_day():
-#    my_keyboard = ReplyKeyboardMarkup()
-#    date = (f'Точная дата: {date.today}')
-#    update.message.reply_text(date, reply_markup=my_keyboard)
 
 def main():
     bot = Updater(settings.API_KEY, use_context=True)
@@ -67,19 +52,20 @@ def main():
         entry_points=[
             MessageHandler(Filters.regex('^(Registration)$'), registration_start)
         ],
-        states={},
+        states={
+            "name":[MessageHandler(Filters.text, registration_name)]
+            },
         fallbacks=[])
 
     dp.add_handler(base)
-    dp.add_handler
     dp.add_handler(CommandHandler('start', greet_user))
     dp.add_handler(CommandHandler('Menu', menu))
     dp.add_handler(CommandHandler('About', about))
     dp.add_handler(CommandHandler('home', greet_user))
     dp.add_handler(CommandHandler('Input', input))
-    #dp.add_handler(CommandHandler('Registration', registration))
+    dp.add_handler(CommandHandler('Registration', registration_start))
     dp.add_handler(MessageHandler(Filters.regex('^(Menu)$'), menu))
-    #dp.add_handler(MessageHandler(Filters.regex('^(Registration)$'), registration))
+    dp.add_handler(MessageHandler(Filters.regex('^(Registration)$'), registration_start))
     dp.add_handler(MessageHandler(Filters.regex('^(About)$'), about))
     dp.add_handler(MessageHandler(Filters.regex('^(home)$'), greet_user))
     dp.add_handler(MessageHandler(Filters.regex('^(Input)$'), input))
