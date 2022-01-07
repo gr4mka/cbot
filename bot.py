@@ -1,47 +1,15 @@
 
-import settings
 import logging
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, conversationhandler
 from telegram import ReplyKeyboardMarkup, KeyboardButton
 
-from datetime import date
-from registration import registration_start, registration_name
-logging.basicConfig(filename="bot.log", level=logging.INFO)
+import settings
 
+# from datetime import date
 
-def greet_user(update, context):
-    text = 'Вызван /start'
-    print(text)
-    my_keyboard = ReplyKeyboardMarkup([['Registration'], ['Menu'], ['About']])
-    username = update.effective_user.first_name  # изначально обращамся к пользователю так, как он сам себя называет в телеге
-    text = update.message.text
-    update.message.reply_text(f'Здравствуйте, {username}!', reply_markup=my_keyboard)
-
-
-def menu(update, context):
-    menu_keyboard = ReplyKeyboardMarkup([['Input', 'Button B', 'Button C'],['Button Z'],['home']])
-    update.message.reply_text(f'Что Вас интересует?', reply_markup=menu_keyboard)
-
-def input(update, context): 
-    my_keyboard = ReplyKeyboardMarkup([
-    ['ID1', 'ID2', 'ID3', 'ID4', 'ID5'],
-    ['ID6', 'ID7', 'ID8', 'ID9', 'ID10'],
-    ['manual_mode'],
-    ['home']])
-    update.message.reply_text(f'Выберите ID валюты', reply_markup=my_keyboard)
-
-
-def about(update, context):
-    about_text =  'Бот разработан в рамках обучающего курса Learn Python, 2022'
-    my_keyboard = ReplyKeyboardMarkup([['Menu'],['home']])
-    update.message.reply_text(f'{about_text}', reply_markup=my_keyboard)
-
-def talk_to_me(update, context):
-    user_text = update.message.text
-    print(f'Ваша команда', {user_text}, 'не распознана')
-    update.message.reply_text(user_text)
-
+from registration import registration_start, registration_name, registration_comment, registration_skip
+from handlers import greet_user, talk_to_me, menu, input, about
 
 def main():
     bot = Updater(settings.API_KEY, use_context=True)
@@ -53,9 +21,15 @@ def main():
             MessageHandler(Filters.regex('^(Registration)$'), registration_start)
         ],
         states={
-            "name":[MessageHandler(Filters.text, registration_name)]
+            'name':[MessageHandler(Filters.text, registration_name)],
+            'rating': [MessageHandler(Filters.regex('^(1|2|3|4|5)$'), registration_rating)],
+            'comment':[
+                CommandHandler('skip', registration_skip),
+                MessageHandler(Filters.text, registration_comment)
+                ]
             },
-        fallbacks=[])
+        fallbacks=[]
+    )
 
     dp.add_handler(base)
     dp.add_handler(CommandHandler('start', greet_user))
