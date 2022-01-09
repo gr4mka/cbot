@@ -9,7 +9,7 @@ logging.basicConfig(filename="bot.log", level=logging.INFO)
 # from datetime import date
 
 from handlers import greet_user, talk_to_me, menu, input, about
-from registration import registration_start, registration_name, registration_choice, registration_comment, registration_skip
+from registration import registration_start, registration_name, registration_choice, registration_comment, registration_skip, registration_mistake
 
 
 def main():
@@ -29,7 +29,8 @@ def main():
                 MessageHandler(Filters.text, registration_comment)
                 ]
             },
-        fallbacks=[]
+        fallbacks=[MessageHandler(Filters.text, registration_mistake)
+        ]
     )
 
     dp.add_handler(base)

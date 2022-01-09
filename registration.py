@@ -43,3 +43,6 @@ def registration_skip(update, context):
 """
     update.message.reply_text(user_text, parse_mode=ParseMode.HTML)
     return ConversationHandler.END
+
+def registration_mistake(update, context):
+    update.message.reply_text('Введены некорректрые данные. Попробуйте еще раз')
