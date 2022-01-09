@@ -1,13 +1,13 @@
 from glob import glob
-from utils import main_keyboard
-from telegram import ReplyKeyboardMarkup
+from telegram import ReplyKeyboardMarkup, KeyboardButton
 
 def greet_user(update, context):
     text = 'Вызван /start'
     print(text)
+    my_keyboard = ReplyKeyboardMarkup([['Registration'], ['Menu'], ['About']])
     username = update.effective_user.first_name  # изначально обращамся к пользователю так, как он сам себя называет в телеге
-    text = update.message.text
-    update.message.reply_text(f'Здравствуйте, {username}!', reply_markup=main_keyboard)
+ #   text = update.message.text
+    update.message.reply_text(f'Здравствуйте, {username}!', reply_markup=my_keyboard)
 
 
 def menu(update, context):
@@ -21,7 +21,6 @@ def input(update, context):
     ['manual_mode'],
     ['home']])
     update.message.reply_text(f'Выберите ID валюты', reply_markup=my_keyboard)
-
 
 def about(update, context):
     about_text =  'Бот разработан в рамках обучающего курса Learn Python, 2022'
