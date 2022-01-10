@@ -1,4 +1,5 @@
 from telegram import ParseMode, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from db import db, get_or_create_user, save_reg
 from telegram.ext.conversationhandler import ConversationHandler
 #from utils import main_keyboard
 
@@ -29,6 +30,8 @@ def registration_choice(update, context):
 
 def registration_comment(update, context):
     context.user_data['registration']['comment'] = update.message.text
+    user = get_or_create_user(db, update.effective_user, update.message.chat.id)
+    save_reg(db, user['user_id']), context.user_data['registration']
     user_text = f"""<b> Имя Фамилия</b>: {context.user_data['registration']['name']}
 <b>Выбор</b>: {context.user_data['registration']['choice']}
 <b>Комментарий</b>: {context.user_data['registration']['comment']}
@@ -36,8 +39,10 @@ def registration_comment(update, context):
     update.message.reply_text(user_text, parse_mode=ParseMode.HTML)
     return ConversationHandler.END
 
+
 def registration_skip(update, context):
-    context.user_data['registration']['coment'] = update.message.text
+    user = get_or_create_user(db, update.effective_user, update.message.chat.id)
+    save_reg(db, user['user_id']), context.user_data['registration']
     user_text = f"""<b> Имя Фамилия</b>: {context.user_data['registration']['name']}
 <b>Выбор</b>: {context.user_data['registration']['choice']}
 """

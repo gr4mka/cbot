@@ -1,7 +1,10 @@
 from glob import glob
 from telegram import ReplyKeyboardMarkup, KeyboardButton
 
+from db import db, get_or_create_user
+
 def greet_user(update, context):
+    user = get_or_create_user(db, update.effective_user, update.message.chat.id)
     text = 'Вызван /start'
     print(text)
     my_keyboard = ReplyKeyboardMarkup([['Registration'], ['Menu'], ['About']])
