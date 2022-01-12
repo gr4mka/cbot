@@ -31,23 +31,26 @@ def registration_choice(update, context):
 def registration_comment(update, context):
     context.user_data['registration']['comment'] = update.message.text
     user = get_or_create_user(db, update.effective_user, update.message.chat.id)
-    save_reg(db, user['user_id']), context.user_data['registration']
-    user_text = f"""<b> Имя Фамилия</b>: {context.user_data['registration']['name']}
-<b>Выбор</b>: {context.user_data['registration']['choice']}
-<b>Комментарий</b>: {context.user_data['registration']['comment']}
-"""
+    save_reg(db, user['user_id'], context.user_data['registration'])
+    user_text = format_registration(context.user_data['registration'])
     update.message.reply_text(user_text, parse_mode=ParseMode.HTML)
     return ConversationHandler.END
 
 
 def registration_skip(update, context):
     user = get_or_create_user(db, update.effective_user, update.message.chat.id)
-    save_reg(db, user['user_id']), context.user_data['registration']
-    user_text = f"""<b> Имя Фамилия</b>: {context.user_data['registration']['name']}
-<b>Выбор</b>: {context.user_data['registration']['choice']}
-"""
+    save_reg(db, user['user_id'], context.user_data['registration'])
+    user_text = format_registration(context.user_data['registration'])
     update.message.reply_text(user_text, parse_mode=ParseMode.HTML)
     return ConversationHandler.END
 
+def format_registration(registration):
+    user_text = f"""<b>Имя Фамилия</b>: {registration['name']}
+<b>Выбор</b>: {registration['choice']}
+"""
+    if 'comment' in registration:
+        user_text += f"\n<b>Комментарий</b>: {registration['comment']}"
+    return user_text
+
 def registration_mistake(update, context):
-    update.message.reply_text('Введены некорректрые данные. Попробуйте еще раз')
+    update.message.reply_text('Введены некорректные данные. Попробуйте еще раз')

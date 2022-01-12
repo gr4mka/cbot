@@ -18,12 +18,32 @@ def get_or_create_user(db, effective_user, chat_id):
         }
         db.users.insert_one(user)
     return user
+""""
+def save_reg(db, user_id, reg_data):
+    user = db.users.find_one({'user_id': user_id})
+    reg_data['created'] = datetime.now()
+    if 'registration' not in user:
+        db.users.update_one(
+            {'_id': user['_id']},
+            {'$set': {'registration': [reg_data]}}
+        )
+    else:
+        db.users.update_one(
+            {'_id': user['_id']},
+            {'$push': {'registration': reg_data}}
+        )
+"""
 
 def save_reg(db, user_id, reg_data):
     user = db.users.find_one({"user_id": user_id})
     reg_data['created'] = datetime.now()
-    if not 'registration' in user:
+    if 'registration' not in user:
         db.users.update_one(
             {'_id': user['_id']},
             {'$set': {'registration': [reg_data]}}
+        )
+    else:
+        db.users.update_one(
+            {'_id': user['_id']},
+            {'$push': {'registration': reg_data}}
         )
