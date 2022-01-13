@@ -6,7 +6,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Conve
 import settings
 logging.basicConfig(filename="bot.log", level=logging.INFO)
 
-from handlers import greet_user, talk_to_me, menu, input, about
+from handlers import greet_user, talk_to_me, menu, input, about, subscribe, unsubscribe
 from registration import registration_start, registration_name, registration_choice, registration_comment, registration_skip, registration_mistake
 from jobs import send_hello
 
@@ -14,7 +14,7 @@ def main():
     bot = Updater(settings.API_KEY, use_context=True)
 
     jq = bot.job_queue
-    jq.run_repeating(send_hello, interval=5)
+    jq.run_repeating(send_hello, interval=60)
 
     dp = bot.dispatcher
 
@@ -41,7 +41,11 @@ def main():
     dp.add_handler(CommandHandler('home', greet_user))
     dp.add_handler(CommandHandler('Input', input))
     dp.add_handler(CommandHandler('Registration', registration_start))
+    dp.add_handler(CommandHandler('subscribe', subscribe))
+    dp.add_handler(CommandHandler('unsubscribe', unsubscribe))
     dp.add_handler(MessageHandler(Filters.regex('^(Menu)$'), menu))
+    dp.add_handler(MessageHandler(Filters.regex('^(subscribe)$'), subscribe))
+    dp.add_handler(MessageHandler(Filters.regex('^(unsubscribe)$'), unsubscribe))
     dp.add_handler(MessageHandler(Filters.regex('^(Registration)$'), registration_start))
     dp.add_handler(MessageHandler(Filters.regex('^(About)$'), about))
     dp.add_handler(MessageHandler(Filters.regex('^(home)$'), greet_user))

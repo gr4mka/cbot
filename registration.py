@@ -1,3 +1,4 @@
+from handlers import greet_user
 from telegram import ParseMode, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from db import db, get_or_create_user, save_reg
 from telegram.ext.conversationhandler import ConversationHandler
@@ -50,6 +51,7 @@ def format_registration(registration):
 """
     if 'comment' in registration:
         user_text += f"\n<b>Комментарий</b>: {registration['comment']}"
+    greet_user()
     return user_text
 
 def registration_mistake(update, context):
